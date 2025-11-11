@@ -45,6 +45,16 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/Dev-BlueX/BlueX-Hub/r
   `,
     tags: []
   },
+
+    {
+    title: "TOASTY HUB",
+    description: "PLANT VS BRAINROTS SCRIPT",
+    scriptContent: `
+loadstring(game:HttpGet("https://raw.githubusercontent.com/nouralddin-abdullah/ToastyHub-XD/refs/heads/main/hub-main.lua"))()
+  `,
+    tags: []
+  },
   
 ]; // конец массива posts
+
 
