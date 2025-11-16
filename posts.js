@@ -35,8 +35,18 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/ily123950/Vulkan/refs
   `,
     tags: []
   },
+
+      {
+    title: "VOIDWARE HUB",
+    description: "99 NIGHTS IN THE FOREST",
+    scriptContent: `
+loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/main/nightsintheforest2.lua", true))()
+  `,
+    tags: []
+  },
   
-]; // конец массива posts
+];
+
 
 
 
