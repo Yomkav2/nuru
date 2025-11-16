@@ -4,171 +4,592 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Nuru</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --bg: #0d1117;           /* Немного светлее фон */
-        --panel: #161b22;        /* Более светлые панели/карточки */
-        --card: #161b22;
-        --muted: #9a98a6;
-        --accent: #8b5cf6;
-        --accent-rgb: 139, 92, 246; /* RGB для тени */
-        --accent-2: #2dd4bf;
-        --border-color: rgba(255, 255, 255, 0.07); /* Видимая рамка */
-    }
+    :root{
+        --bg:#010105;
+        --panel:#0a0915;
+        --card:#0d0c1a;
+        --card-hover:#121128;
+        --muted:#8b8998;
+        --accent:#a78bfa;
+        --accent-2:#2dd4bf;
+        --accent-3:#f472b6;
+        --neon-glow: 0 0 15px rgba(167, 139, 250, 0.5), 0 0 30px rgba(167, 139, 250, 0.2);
+        --neon-glow-teal: 0 0 15px rgba(45, 212, 191, 0.5);
+        --neon-glow-pink: 0 0 15px rgba(244, 114, 182, 0.4);
+        --gradient: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 50%, #f472b6 100%);
+    }
 
-    html, body {
-        height: 100%; margin: 0; background: var(--bg); color: #eef0f7;
-        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        -webkit-font-smoothing: antialiased;
-    }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-    header {
-        position: sticky; top: 0; z-index: 30;
-        display: flex; align-items: center; gap: 14px; padding: 12px 18px;
-        /* Более заметный фон хедера */
-        background: rgba(13, 17, 23, 0.7); 
-        border-bottom: 1px solid var(--border-color);
-        backdrop-filter: blur(8px);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-    }
+    html, body {
+        height: 100%;
+        background: var(--bg);
+        color: #f0f2ff;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+        overflow-x: hidden;
+    }
 
-    .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
-    .logo {
-        width: 44px; height: 44px; border-radius: 8px;
-        /* Яркий логотип с акцентным градиентом */
-        background: linear-gradient(180deg, var(--accent), #6f42f5);
-        display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff;
-        box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.25);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    h1 { margin: 0; font-size: 1.05rem; color: var(--accent); letter-spacing: 0.3px; }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--accent);
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #8b5cf6;
+    }
 
-    main { max-width: 1100px; margin: 22px auto; padding: 16px; box-sizing: border-box; }
+    /* Header with glass morphism */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        background: rgba(1, 1, 5, 0.85);
+        border-bottom: 1px solid rgba(167, 139, 250, 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+    }
 
-    .controls { display: flex; gap: 14px; margin-bottom: 18px; align-items: center; }
-    .search {
-        flex: 1; display: flex; gap: 10px; align-items: center; padding: 10px 12px;
-        border-radius: 12px; background: var(--panel); border: 1px solid var(--border-color);
-        transition: border-color 0.2s ease; /* Анимация */
-    }
-    .search:focus-within {
-        border-color: var(--accent); /* Акцент при фокусе */
-    }
-    .search input { background: transparent; border: 0; outline: 0; color: inherit; font-size: 1rem; width: 100%; }
-    
-    .btn {
-        background: linear-gradient(180deg, var(--accent), #6f42f5);
-        border: 0; padding: 10px 14px; border-radius: 10px; color: white;
-        font-weight: 600; cursor: pointer;
-        box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.2);
-        transition: opacity 0.2s ease, transform 0.2s ease; /* Анимация */
-    }
-    .btn:hover {
-        opacity: 0.85;
-    }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        cursor: pointer;
+        user-select: none;
+        transition: transform 0.3s ease;
+    }
 
-    .post-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
-    .post-card {
-        display: block;
-        background: var(--card);
-        border-radius: 12px; padding: 14px; border: 1px solid var(--border-color);
-        min-height: 110px; box-sizing: border-box; color: inherit; text-decoration: none;
-        /* Анимация для "приподнимания" */
-        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-    /* Эффект при наведении */
-    .post-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: var(--accent);
-    }
-    .post-card h3 { margin: 0 0 8px 0; color: #fff; font-size: 1.03rem; }
-    .post-card p { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.35; }
-    .tag { display: inline-block; padding: 6px 8px; border-radius: 8px; background: rgba(255, 255, 255, 0.03); color: var(--muted); font-size: 0.8rem; margin-top: 10px; }
+    .brand:hover {
+        transform: translateX(5px);
+    }
 
-    .muted-center { text-align: center; color: var(--muted); padding: 24px 10px; }
+    .logo {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: #0a0915;
+        box-shadow: var(--neon-glow);
+        position: relative;
+        overflow: hidden;
+    }
 
-    footer { display: none; }
+    .logo::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.6s;
+    }
 
-    /* Правило "transition: none" убрано, чтобы разрешить анимации */
+    .brand:hover .logo::after {
+        left: 100%;
+    }
 
-    @media (max-width: 980px) {
-        .post-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
-    }
+    h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    /* Telegram buttons */
+    .telegram-buttons {
+        display: flex;
+        gap: 12px;
+    }
+
+    .tg-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+
+    .tg-btn.nuru {
+        background: linear-gradient(135deg, #0088cc, #00aced);
+        box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);
+        color: white;
+    }
+
+    .tg-btn.yomka {
+        background: linear-gradient(135deg, #ff6b8b, #ff8e53);
+        box-shadow: 0 0 15px rgba(255, 107, 139, 0.5);
+        color: white;
+    }
+
+    .tg-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0 20px rgba(0, 136, 204, 0.7);
+    }
+
+    .tg-btn.yomka:hover {
+        box-shadow: 0 0 20px rgba(255, 107, 139, 0.7);
+    }
+
+    /* Main content */
+    main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 24px;
+        animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Search and controls */
+    .hero {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+
+    .hero h2 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 16px;
+        background: linear-gradient(135deg, #a78bfa 0%, #2dd4bf 50%, #f472b6 100%);
+        background-size: 200% auto;
+        animation: gradientShift 3s ease-in-out infinite;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        color: var(--muted);
+        max-width: 600px;
+        margin: 0 auto 32px;
+    }
+
+    .controls {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 32px;
+        align-items: center;
+    }
+
+    .search {
+        flex: 1;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 16px 20px;
+        border-radius: 20px;
+        background: var(--panel);
+        border: 1px solid rgba(167, 139, 250, 0.15);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+
+    .search:focus-within {
+        border-color: var(--accent);
+        box-shadow: var(--neon-glow);
+        transform: translateY(-2px);
+    }
+
+    .search input {
+        background: transparent;
+        border: 0;
+        outline: 0;
+        color: inherit;
+        font-size: 1rem;
+        width: 100%;
+        font-weight: 500;
+    }
+
+    .search input::placeholder {
+        color: var(--muted);
+    }
+
+    /* Enhanced buttons */
+    .btn {
+        background: linear-gradient(135deg, var(--accent), #8b5cf6);
+        border: 0;
+        padding: 16px 28px;
+        border-radius: 14px;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--neon-glow);
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.6s;
+    }
+
+    .btn:hover {
+        box-shadow: 0 0 20px rgba(167, 139, 250, 0.7), 0 0 40px rgba(167, 139, 250, 0.4);
+        transform: translateY(-3px);
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    /* Post grid with animations */
+    .post-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .post-card {
+        display: block;
+        background: var(--card);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(167, 139, 250, 0.1);
+        min-height: 160px;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        animation: cardSlide 0.6s ease-out backwards;
+    }
+
+    .post-card:nth-child(1) { animation-delay: 0.1s; }
+    .post-card:nth-child(2) { animation-delay: 0.2s; }
+    .post-card:nth-child(3) { animation-delay: 0.3s; }
+    .post-card:nth-child(4) { animation-delay: 0.4s; }
+
+    @keyframes cardSlide {
+        from { 
+            opacity: 0; 
+            transform: translateY(30px) scale(0.95); 
+        }
+        to { 
+            opacity: 1; 
+            transform: translateY(0) scale(1); 
+        }
+    }
+
+    .post-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+
+    .post-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        background: var(--card-hover);
+        border-color: rgba(167, 139, 250, 0.3);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), var(--neon-glow);
+    }
+
+    .post-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .post-card h3 {
+        margin: 0 0 12px 0;
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .post-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .tag {
+        display: inline-block;
+        padding: 8px 14px;
+        border-radius: 10px;
+        background: rgba(167, 139, 250, 0.1);
+        color: var(--accent);
+        font-size: 0.85rem;
+        margin-top: 16px;
+        font-weight: 600;
+        border: 1px solid rgba(167, 139, 250, 0.2);
+        transition: all 0.3s ease;
+    }
+
+    .post-card:hover .tag {
+        background: rgba(167, 139, 250, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .muted-center {
+        text-align: center;
+        color: var(--muted);
+        padding: 60px 20px;
+        font-size: 1.2rem;
+        grid-column: 1 / -1;
+    }
+
+    /* Footer */
+    footer {
+        text-align: center;
+        padding: 40px 20px;
+        margin-top: 60px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        color: var(--muted);
+        font-size: 0.9rem;
+    }
+
+    .footer-glow {
+        height: 2px;
+        width: 100px;
+        background: var(--gradient);
+        margin: 0 auto 20px;
+        border-radius: 2px;
+        box-shadow: var(--neon-glow);
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .post-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        }
+        
+        .hero h2 {
+            font-size: 2.5rem;
+        }
+        
+        .telegram-buttons {
+            display: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .controls {
+            flex-direction: column;
+        }
+        
+        .btn {
+            width: 100%;
+        }
+        
+        .hero h2 {
+            font-size: 2rem;
+        }
+        
+        .hero p {
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .post-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        main {
+            padding: 24px 16px;
+        }
+        
+        header {
+            padding: 12px 16px;
+        }
+        
+        .hero h2 {
+            font-size: 1.8rem;
+        }
+    }
 </style>
 </head>
 <body>
 <header>
-    <div class="brand" onclick="location.href='index.html'">
-        <div class="logo">N</div>
-        <h1>Nuru</h1>
-    </div>
+    <div class="brand" onclick="location.href='index.html'">
+        <div class="logo">N</div>
+        <h1>Nuru</h1>
+    </div>
+    <div class="telegram-buttons">
+        <a href="https://t.me/nuruhub" class="tg-btn nuru" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            NURU TELEGRAM
+        </a>
+        <a href="https://t.me/YomkaMadeIt" class="tg-btn yomka" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            YOMKA TELEGRAM
+        </a>
+    </div>
 </header>
 
 <main>
-    <div class="controls">
-        <div class="search">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.7"><path d="M21 21l-4.35-4.35" stroke="#fff" stroke-opacity="0.7" stroke-width="1.6" stroke-linecap="round"></path><circle cx="11" cy="11" r="5" stroke="#fff" stroke-opacity="0.6" stroke-width="1.6"></circle></svg>
-                        <input id="search-bar" placeholder="Search by title or description" />
-        </div>
-    </div>
+    <div class="hero">
+        <h2>Discover Powerful Scripts</h2>
+        <p>Explore our collection of premium Lua scripts designed to enhance your experience</p>
+        <div class="telegram-buttons" style="justify-content: center; margin-top: 20px;">
+            <a href="https://t.me/nuruhub" class="tg-btn nuru" target="_blank">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                NURU TELEGRAM
+            </a>
+            <a href="https://t.me/YomkaMadeIt" class="tg-btn yomka" target="_blank">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8.5 12.5L10.5 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                YOMKA TELEGRAM
+            </a>
+        </div>
+    </div>
 
-    <section>
-        <div id="post-container" class="post-grid"></div>
-                <div id="empty" class="muted-center" style="display:none;">Nothing found. Try a different query.</div>
-    </section>
+    <div class="controls">
+        <div class="search">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="opacity:.7">
+                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" stroke-linecap="round"></path>
+                <circle cx="11" cy="11" r="5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6"></circle>
+            </svg>
+            <input id="search-bar" placeholder="Search scripts by title, description or tags..." />
+        </div>
+    </div>
+
+    <section>
+        <div id="post-container" class="post-grid"></div>
+        <div id="empty" class="muted-center" style="display:none;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" style="opacity:0.5; margin-bottom: 16px;">
+                <path d="M15 10L9 14M9 10L15 14M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <div>No scripts found matching your search</div>
+            <div style="font-size: 0.9rem; margin-top: 8px;">Try different keywords or browse all scripts</div>
+        </div>
+    </section>
 </main>
+
+<footer>
+    <div class="footer-glow"></div>
+    <div>Nuru Script Hub</div>
+    <div style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7;">Premium Lua Scripts Collection</div>
+</footer>
 
 <script src="posts.js"></script>
 <script>
 if (typeof posts === 'undefined') {
-    // Перевод
-    document.getElementById('post-container').innerHTML = '<div class="muted-center">File posts.js not found or contains an error.</div>';
-    throw new Error('posts.js not found');
+    document.getElementById('post-container').innerHTML = '<div class="muted-center">Error: posts.js file not found or contains an error.</div>';
+    throw new Error('posts.js not found');
 }
 
-const allPosts = posts.map((p, i) => ({
-    title: String(p.title || 'Untitled'), // Перевод
-    description: String(p.description || ''),
-    id: i + 1,
-    tags: Array.isArray(p.tags) ? p.tags : []
+const allPosts = posts.map((p,i) => ({
+    title: String(p.title || 'Untitled'),
+    description: String(p.description || ''),
+    id: i + 1,
+    tags: Array.isArray(p.tags) ? p.tags : []
 }));
 
 const container = document.getElementById('post-container');
 const emptyBox = document.getElementById('empty');
 const searchBar = document.getElementById('search-bar');
 
-function escapeHtml(s) { return s.replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
-function truncate(s, n) { return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+function escapeHtml(s){ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function truncate(s,n){ return s.length>n? s.slice(0,n-1)+'…' : s; }
 
-function render(list) {
-    container.innerHTML = '';
-    if (!list.length) { emptyBox.style.display = 'block'; return; }
-    emptyBox.style.display = 'none';
-    list.forEach((post) => {
-        const card = document.createElement('a');
-        card.className = 'post-card';
-        card.href = `post.html?id=${post.id}`;
-        card.innerHTML = `<div><h3>${escapeHtml(post.title)}</h3><p>${escapeHtml(truncate(post.description, 120))}</p></div><div class="tag small">${post.tags.join(' · ') || 'script'}</div>`;
-        container.appendChild(card);
-    });
+function render(list){
+    container.innerHTML='';
+    if (!list.length) { 
+        emptyBox.style.display='block'; 
+        return; 
+    }
+    emptyBox.style.display='none';
+    
+    list.forEach((post, index) => {
+        const card = document.createElement('a');
+        card.className = 'post-card';
+        card.href = `post.html?id=${post.id}`;
+        card.style.animationDelay = `${(index % 4) * 0.1}s`;
+        card.innerHTML = `
+            <div>
+                <h3>${escapeHtml(post.title)}</h3>
+                <p>${escapeHtml(truncate(post.description,140))}</p>
+            </div>
+            <div class="tag">${post.tags.join(' · ') || 'script'}</div>
+        `;
+        container.appendChild(card);
+    });
 }
 
 let timer = null;
 searchBar.addEventListener('input', (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-        const q = e.target.value.trim().toLowerCase();
-        const filtered = allPosts.filter(p =>
-            p.title.toLowerCase().includes(q) ||
-            p.description.toLowerCase().includes(q) ||
-            p.tags.join(' ').toLowerCase().includes(q)
-        );
-        render(filtered);
-    }, 120);
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+        const q = e.target.value.trim().toLowerCase();
+        const filtered = allPosts.filter(p =>
+            p.title.toLowerCase().includes(q) ||
+            p.description.toLowerCase().includes(q) ||
+            p.tags.join(' ').toLowerCase().includes(q)
+        );
+        render(filtered);
+    }, 150);
 });
 
+// Initial render
 render(allPosts);
 </script>
 </body>
