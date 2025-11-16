@@ -1,127 +1,163 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Nuru — Просмотр</title>
+<title>Nuru — View Post</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-    :root{
-        --bg:#010105;
-        --panel:#06050a;
-        --muted:#9b99a6;
-        --accent:#8b5cf6;
-    }
-    html,body{height:100%;margin:0;background:var(--bg);color:#eef0f7;font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Arial;-webkit-font-smoothing:antialiased;}
-    .wrap{max-width:980px;margin:24px auto;padding:18px;}
-    .top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-    a.back{color:var(--muted);text-decoration:none;font-size:0.95rem;}
-    h1{margin:0;color:var(--accent);font-size:1.3rem;}
-    .subtitle{color:var(--muted);margin-top:6px;font-size:0.95rem;}
+    :root {
+        /* Синхронизированная палитра */
+        --bg: #0d1117;
+        --panel: #161b22;
+        --muted: #9b99a6;
+        --accent: #8b5cf6;
+        --accent-rgb: 139, 92, 246;
+        --accent-2: #2dd4bf;
+        --border-color: rgba(255, 255, 255, 0.07);
+    }
+    html, body {
+        height: 100%; margin: 0; background: var(--bg); color: #eef0f7;
+        font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        -webkit-font-smoothing: antialiased;
+    }
 
-    .panel{background:var(--panel);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02);box-shadow:none;}
-    .meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;}
-    .meta .small{color:var(--muted);font-size:0.9rem;}
-    .controls{display:flex;gap:10px;}
-    .btn{background:linear-gradient(180deg,var(--accent),#6f42f5);border:0;padding:10px 14px;border-radius:10px;color:white;font-weight:600;cursor:pointer;}
-    .btn.alt{background:linear-gradient(180deg,#3ac6a1,#2aa79b);}
+    .wrap { max-width: 980px; margin: 24px auto; padding: 18px; }
+    .top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    a.back { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+    a.back:hover { color: var(--accent); } /* Добавлен hover */
+    h1 { margin: 0; color: var(--accent); font-size: 1.3rem; }
+    .subtitle { color: var(--muted); margin-top: 6px; font-size: 0.95rem; }
 
-    pre{background:#06050b;color:#e7eef7;padding:14px;border-radius:10px;overflow:auto;border:1px solid rgba(255,255,255,0.02);font-family: "Courier New", monospace;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin-top:12px;}
-    code{font-family:inherit;color:inherit;}
+    .panel {
+        background: var(--panel); border-radius: 12px; padding: 16px;
+        border: 1px solid var(--border-color); /* Улучшенная рамка */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .meta .small { color: var(--muted); font-size: 0.9rem; }
+    .controls { display: flex; gap: 10px; }
+    
+    .btn {
+        background: linear-gradient(180deg, var(--accent), #6f42f5);
+        border: 0; padding: 10px 14px; border-radius: 10px; color: white;
+        font-weight: 600; cursor: pointer;
+        box-shadow: 0 2px 8px rgba(var(--accent-rgb), 0.2);
+        transition: opacity 0.2s ease, transform 0.2s ease; /* Анимация */
+    }
+    .btn:hover {
+        opacity: 0.85;
+    }
+    .btn.alt {
+        background: linear-gradient(180deg, #3ac6a1, #2aa79b);
+        box-shadow: 0 2px 8px rgba(42, 167, 155, 0.2);
+    }
 
-    .note{margin-top:12px;color:var(--muted);font-size:0.9rem;}
+    pre {
+        background: #010105; /* Чуть темнее для контраста с панелью */
+        color: #e7eef7; padding: 14px; border-radius: 10px; overflow: auto;
+        border: 1px solid var(--border-color);
+        font-family: "Courier New", monospace; line-height: 1.55;
+        white-space: pre-wrap; word-break: break-word; margin-top: 12px;
+    }
+    code { font-family: inherit; color: inherit; }
+    .note { margin-top: 12px; color: var(--muted); font-size: 0.9rem; }
 
-    /* отключаем анимации */
-    * { transition: none !important; animation: none !important; }
+    /* Правило "transition: none" убрано */
 </style>
 </head>
 <body>
 <div class="wrap">
-    <div class="top">
-        <a class="back" href="index.html">← Nuru</a>
-        <h1 id="title">Загрузка...</h1>
-    </div>
+    <div class="top">
+                <a class="back" href="index.html">← Back to Nuru</a>
+        <h1 id="title">Loading...</h1>
+    </div>
 
-    <div id="panel" class="panel">
-        <div class="meta">
-            <div>
-                <div id="desc" class="subtitle">Загрузка описания...</div>
-                <div id="tags" class="note"></div>
-            </div>
-            <div class="controls">
-                <button id="copy-btn" class="btn">Копировать</button>
-                <button id="download-btn" class="btn alt">Скачать .lua</button>
-            </div>
-        </div>
+    <div id="panel" class="panel">
+        <div class="meta">
+            <div>
+                                <div id="desc" class="subtitle">Loading description...</div>
+                <div id="tags" class="note"></div>
+            </div>
+            <div class="controls">
+                                <button id="copy-btn" class="btn">Copy</button>
+                <button id="download-btn" class="btn alt">Download .lua</button>
+            </div>
+        </div>
 
-        <pre id="script"><code id="script-code"></code></pre>
-        <div id="error" class="note" style="display:none;color:#ff9aa2;"></div>
-    </div>
+        <pre id="script"><code id="script-code"></code></pre>
+        <div id="error" class="note" style="display:none;color:#ff9aa2;"></div>
+    </div>
 </div>
 
 <script src="posts.js"></script>
 <script>
-function qs(name){
-    return new URLSearchParams(location.search).get(name);
+function qs(name) {
+    return new URLSearchParams(location.search).get(name);
 }
 
 if (typeof posts === 'undefined') {
-    document.getElementById('panel').innerHTML = '<div style="color:#ff9aa2">Ошибка: posts.js не загружен.</div>';
-    throw new Error('posts.js not found');
+    // Перевод
+    document.getElementById('panel').innerHTML = '<div style="color:#ff9aa2">Error: posts.js not loaded.</div>';
+    throw new Error('posts.js not found');
 }
 
-const id = parseInt(qs('id'),10);
+const id = parseInt(qs('id'), 10);
 if (!id || isNaN(id)) {
-    document.getElementById('error').style.display='block';
-    document.getElementById('error').textContent = 'Некорректный параметр id в URL.';
-    document.getElementById('title').textContent = 'Ошибка';
-    document.getElementById('desc').textContent = '';
-    throw new Error('invalid id');
+    document.getElementById('error').style.display = 'block';
+    // Перевод
+    document.getElementById('error').textContent = 'Invalid ID parameter in URL.';
+    document.getElementById('title').textContent = 'Error';
+    document.getElementById('desc').textContent = '';
+    throw new Error('invalid id');
 }
 
 const index = id - 1;
 if (index < 0 || index >= posts.length) {
-    document.getElementById('error').style.display='block';
-    document.getElementById('error').textContent = 'Пост с таким id не найден.';
-    document.getElementById('title').textContent = 'Не найдено';
-    document.getElementById('desc').textContent = '';
-    throw new Error('post not found');
+    document.getElementById('error').style.display = 'block';
+    // Перевод
+    document.getElementById('error').textContent = 'Post with this ID not found.';
+    document.getElementById('title').textContent = 'Not Found';
+    document.getElementById('desc').textContent = '';
+    throw new Error('post not found');
 }
 
 const post = posts[index];
 
-document.getElementById('title').textContent = post.title || 'Без названия';
+// Перевод
+document.getElementById('title').textContent = post.title || 'Untitled';
 document.getElementById('desc').textContent = post.description || '';
-document.getElementById('tags').textContent = (post.tags && post.tags.length) ? ('Теги: ' + post.tags.join(', ')) : 'Без тегов';
+document.getElementById('tags').textContent = (post.tags && post.tags.length) ? ('Tags: ' + post.tags.join(', ')) : 'No tags';
 const codeEl = document.getElementById('script-code');
 const rawScript = String(post.scriptContent || '').trim();
-codeEl.textContent = rawScript; // вставляем как текст — без HTML-подсветки и без синего цвета
+codeEl.textContent = rawScript;
 
 // copy
 const copyBtn = document.getElementById('copy-btn');
 copyBtn.addEventListener('click', async () => {
-    try{
-        await navigator.clipboard.writeText(rawScript);
-        copyBtn.textContent = 'Скопировано';
-        setTimeout(()=>copyBtn.textContent='Копировать',1400);
-    }catch(e){
-        copyBtn.textContent = 'Ошибка';
-        console.error(e);
-    }
+    try {
+        await navigator.clipboard.writeText(rawScript);
+        // Перевод
+        copyBtn.textContent = 'Copied';
+        setTimeout(() => copyBtn.textContent = 'Copy', 1400);
+    } catch (e) {
+        copyBtn.textContent = 'Error'; // Перевод
+        console.error(e);
+    }
 });
 
 // download
 document.getElementById('download-btn').addEventListener('click', () => {
-    const blob = new Blob([rawScript], {type:'text/plain;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const safe = (post.title || 'script').replace(/[\/\\?%*:|"<>]/g,'_').slice(0,60);
-    a.download = safe + '.lua';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    const blob = new Blob([rawScript], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const safe = (post.title || 'script').replace(/[\/\\?%*:|"<>]/g, '_').slice(0, 60);
+    a.download = safe + '.lua';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
 });
 </script>
 </body>
