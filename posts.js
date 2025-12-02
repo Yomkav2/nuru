@@ -44,8 +44,21 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/VapeVoidware/VW-Add/m
   `,
     tags: []
   },
+
+        {
+    title: "NO 1 HUB",
+    description: "THE FORGE",
+    scriptContent: `
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+loadstring(game:HttpGet("https://raw.githubusercontent.com/SkibidiHub111/Forge/refs/heads/main/No1Dev"))()
+  `,
+    tags: []
+  },
   
 ];
+
 
 
 
